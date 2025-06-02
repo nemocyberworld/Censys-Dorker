@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <title>Censys Dorker - Bug Bounty Edition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center py-10 px-4">
+
+  <div class="w-full max-w-3xl bg-white rounded-lg shadow-md p-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Censys Dorker - Bug Bounty Edition</h1>
+
+    <label for="target-domain" class="block text-gray-700 font-semibold mb-2">Enter Target Domain or Subdomain:</label>
+    <input type="text" id="target-domain" placeholder="e.g. example.com or *.example.com"
+      class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6" />
+
+    <label for="prebuilt-dorks" class="block text-gray-700 font-semibold mb-2">Select a Prebuilt Dork Query:</label>
+<select id="prebuilt-dorks" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6">
+  <option value="">-- Select a query or enter your own below --</option>
+  
+  <!-- Basic domain and subdomain scans -->
+  <option value="*.targetdomain.com">Wildcard subdomains (*.targetdomain.com)</option>
+  <option value="targetdomain.com">Root domain (targetdomain.com)</option>
+  <option value="login AND *.targetdomain.com">HTTP pages with &quot;login&quot; on subdomains</option>
+  <option value="ssh AND targetdomain.com">SSH services on targetdomain.com</option>
+  <option value="ftp AND *.targetdomain.com">FTP services on subdomains</option>
+  <option value="rdp AND targetdomain.com">RDP services on root domain</option>
+  <option value="smtp AND *.targetdomain.com">SMTP servers on subdomains</option>
+  <option value="pop3 AND targetdomain.com">POP3 servers on root domain</option>
+  <option value="imap AND *.targetdomain.com">IMAP servers on subdomains</option>
+  <option value="telnet AND targetdomain.com">Telnet services on root domain</option>
+  
+  <!-- HTTP(S) services -->
+  <option value="&quot;http&quot; AND &quot;*.targetdomain.com&quot;">HTTP services on subdomains</option>
+  <option value="&quot;https&quot; AND &quot;*.targetdomain.com&quot;">HTTPS services on subdomains</option>
+  <option value="&quot;apache&quot; AND &quot;*.targetdomain.com&quot;">Apache HTTP servers on subdomains</option>
+  <option value="&quot;nginx&quot; AND &quot;*.targetdomain.com&quot;">Nginx HTTP servers on subdomains</option>
+  <option value="&quot;admin&quot; AND &quot;*.targetdomain.com&quot;">HTTP pages with &quot;admin&quot;</option>
+  <option value="&quot;dashboard&quot; AND &quot;*.targetdomain.com&quot;">HTTP pages with &quot;dashboard&quot;</option>
+  <option value="&quot;php&quot; AND &quot;*.targetdomain.com&quot;">HTTP servers powered by PHP</option>
+  <option value="&quot;ASP.NET&quot; AND &quot;*.targetdomain.com&quot;">HTTP servers powered by ASP.NET</option>
+  <option value="&quot;Java&quot; AND &quot;*.targetdomain.com&quot;">HTTP servers powered by Java</option>
+  <option value="&quot;login&quot; AND &quot;*.targetdomain.com&quot;">HTTP login pages</option>
+  
+  <!-- TLS / Certificates -->
+  <option value="&quot;*.targetdomain.com&quot;">TLS certs SANs with wildcard subdomains</option>
+  <option value="&quot;targetdomain.com&quot;">TLS certs with CN targetdomain.com</option>
+  <option value="&quot;Let's Encrypt&quot; AND &quot;*.targetdomain.com&quot;">Let's Encrypt certs for subdomains</option>
+  <option value="&quot;digital_signature&quot; AND &quot;*.targetdomain.com&quot;">TLS certs with digital signature usage</option>
+  <option value="&quot;key_encipherment&quot; AND &quot;*.targetdomain.com&quot;">TLS certs with key encipherment usage</option>
+  
+  <!-- Services & Protocols -->
+  <option value="&quot;ssh&quot; AND &quot;*.targetdomain.com&quot;">SSH services on subdomains</option>
+  <option value="&quot;OpenSSH&quot; AND &quot;*.targetdomain.com&quot;">OpenSSH servers on subdomains</option>
+  <option value="&quot;rdp&quot; AND &quot;*.targetdomain.com&quot;">RDP services on subdomains</option>
+  <option value="&quot;smb&quot; AND &quot;*.targetdomain.com&quot;">SMB services on subdomains</option>
+  <option value="&quot;mysql&quot; AND &quot;*.targetdomain.com&quot;">MySQL services on subdomains</option>
+  <option value="&quot;mssql&quot; AND &quot;*.targetdomain.com&quot;">MSSQL services on subdomains</option>
+  <option value="&quot;mongodb&quot; AND &quot;*.targetdomain.com&quot;">MongoDB services on subdomains</option>
+  <option value="&quot;elastic&quot; AND &quot;*.targetdomain.com&quot;">Elasticsearch services on subdomains</option>
+  <option value="&quot;ftp&quot; AND &quot;*.targetdomain.com&quot;">FTP services on subdomains</option>
+  <option value="&quot;smtp&quot; AND &quot;*.targetdomain.com&quot;">SMTP services on subdomains</option>
+  
+  <!-- Default ports -->
+  <option value="&quot;port:21&quot; AND &quot;*.targetdomain.com&quot;">FTP on port 21</option>
+  <option value="&quot;port:22&quot; AND &quot;*.targetdomain.com&quot;">SSH on port 22</option>
+  <option value="&quot;port:23&quot; AND &quot;*.targetdomain.com&quot;">Telnet on port 23</option>
+  <option value="&quot;port:25&quot; AND &quot;*.targetdomain.com&quot;">SMTP on port 25</option>
+  <option value="&quot;port:53&quot; AND &quot;*.targetdomain.com&quot;">DNS on port 53</option>
+  <option value="&quot;port:80&quot; AND &quot;*.targetdomain.com&quot;">HTTP on port 80</option>
+  <option value="&quot;port:110&quot; AND &quot;*.targetdomain.com&quot;">POP3 on port 110</option>
+  <option value="&quot;port:143&quot; AND &quot;*.targetdomain.com&quot;">IMAP on port 143</option>
+  <option value="&quot;port:443&quot; AND &quot;*.targetdomain.com&quot;">HTTPS on port 443</option>
+  <option value="&quot;port:3389&quot; AND &quot;*.targetdomain.com&quot;">RDP on port 3389</option>
+  
+  <!-- Vulnerable software banners -->
+  <option value="&quot;Apache-Coyote&quot; AND &quot;*.targetdomain.com&quot;">Apache Tomcat servers</option>
+  <option value="&quot;lighttpd&quot; AND &quot;*.targetdomain.com&quot;">Lighttpd servers</option>
+  <option value="&quot;Microsoft-IIS&quot; AND &quot;*.targetdomain.com&quot;">Microsoft IIS servers</option>
+  <option value="&quot;cloudflare&quot; AND &quot;*.targetdomain.com&quot;">Cloudflare servers</option>
+  <option value="&quot;gunicorn&quot; AND &quot;*.targetdomain.com&quot;">Gunicorn servers</option>
+  <option value="&quot;nginx&quot; AND &quot;*.targetdomain.com&quot;">Nginx servers</option>
+  <option value="&quot;openresty&quot; AND &quot;*.targetdomain.com&quot;">OpenResty servers</option>
+  <option value="&quot;Apache&quot; AND &quot;*.targetdomain.com&quot;">Apache servers</option>
+  <option value="&quot;Jetty&quot; AND &quot;*.targetdomain.com&quot;">Jetty servers</option>
+  <option value="&quot;Kestrel&quot; AND &quot;*.targetdomain.com&quot;">Kestrel servers</option>
+  
+  <!-- Specific pages -->
+  <option value="&quot;phpmyadmin&quot; AND &quot;*.targetdomain.com&quot;">phpMyAdmin pages</option>
+  <option value="&quot;webmail&quot; AND &quot;*.targetdomain.com&quot;">Webmail pages</option>
+  <option value="&quot;gitlab&quot; AND &quot;*.targetdomain.com&quot;">GitLab pages</option>
+  <option value="&quot;jira&quot; AND &quot;*.targetdomain.com&quot;">Jira pages</option>
+  <option value="&quot;confluence&quot; AND &quot;*.targetdomain.com&quot;">Confluence pages</option>
+  <option value="&quot;dashboard&quot; AND &quot;*.targetdomain.com&quot;">Dashboard pages</option>
+  <option value="&quot;admin&quot; AND &quot;*.targetdomain.com&quot;">Admin pages</option>
+  <option value="&quot;login&quot; AND &quot;*.targetdomain.com&quot;">Login pages</option>
+  <option value="&quot;signup&quot; AND &quot;*.targetdomain.com&quot;">Signup pages</option>
+  <option value="&quot;register&quot; AND &quot;*.targetdomain.com&quot;">Register pages</option>
+  
+  <!-- HTTP headers & metadata -->
+  <option value="&quot;PHP&quot; AND &quot;*.targetdomain.com&quot;">HTTP powered by PHP</option>
+  <option value="&quot;ASP.NET&quot; AND &quot;*.targetdomain.com&quot;">HTTP powered by ASP.NET</option>
+  <option value="&quot;Express&quot; AND &quot;*.targetdomain.com&quot;">HTTP powered by Express</option>
+  <option value="&quot;Python&quot; AND &quot;*.targetdomain.com&quot;">HTTP powered by Python</option>
+  <option value="&quot;Node.js&quot; AND &quot;*.targetdomain.com&quot;">HTTP powered by Node.js</option>
+  <option value="&quot;Ruby&quot; AND &quot;*.targetdomain.com&quot;">HTTP powered by Ruby</option>
+  
+  <!-- CDN and proxy -->
+  <option value="&quot;Cloudflare&quot; AND &quot;*.targetdomain.com&quot;">Behind Cloudflare CDN</option>
+  <option value="&quot;Akamai&quot; AND &quot;*.targetdomain.com&quot;">Behind Akamai CDN</option>
+  <option value="&quot;Fastly&quot; AND &quot;*.targetdomain.com&quot;">Behind Fastly CDN</option>
+  
+  <!-- Uncommon protocols -->
+  <option value="&quot;snmp&quot; AND &quot;*.targetdomain.com&quot;">SNMP services</option>
+  <option value="&quot;ntp&quot; AND &quot;*.targetdomain.com&quot;">NTP services</option>
+  <option value="&quot;ldap&quot; AND &quot;*.targetdomain.com&quot;">LDAP services</option>
+  <option value="&quot;rpcbind&quot; AND &quot;*.targetdomain.com&quot;">RPCBind services</option>
+  <option value="&quot;memcached&quot; AND &quot;*.targetdomain.com&quot;">Memcached services</option>
+  <option value="&quot;redis&quot; AND &quot;*.targetdomain.com&quot;">Redis services</option>
+  <option value="&quot;cassandra&quot; AND &quot;*.targetdomain.com&quot;">Cassandra services</option>
+  <option value="&quot;rabbitmq&quot; AND &quot;*.targetdomain.com&quot;">RabbitMQ services</option>
+  
+</select>
+
+
+    <label for="dork-input" class="block text-gray-700 font-semibold mb-2">Or enter your custom Censys query:</label>
+    <textarea id="dork-input" placeholder='e.g. *.targetdomain.com OR login *.targetdomain.com' rows="4" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6 resize-none"></textarea>
+
+    <button id="generate-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-md transition duration-200">Generate Search URL</button>
+
+    <div class="url-output mt-6 bg-gray-50 p-4 rounded-md break-words text-blue-700 font-mono"></div>
+  </div>
+
+  <script>
+    const baseUrl = 'https://platform.censys.io/search?q=';
+    const select = document.getElementById('prebuilt-dorks');
+    const textarea = document.getElementById('dork-input');
+    const generateBtn = document.getElementById('generate-btn');
+    const outputDiv = document.querySelector('.url-output');
+    const targetInput = document.getElementById('target-domain');
+
+    select.addEventListener('change', () => {
+      const val = select.value;
+      textarea.value = val || '';
+      outputDiv.innerHTML = '';
+    });
+
+    generateBtn.addEventListener('click', () => {
+      const target = targetInput.value.trim();
+      if (!target) {
+        alert('Please enter a target domain or subdomain!');
+        targetInput.focus();
+        return;
+      }
+
+      let query = textarea.value.trim();
+      if (!query) {
+        alert('Please enter or select a Censys query.');
+        return;
+      }
+
+      // Replace all occurrences of 'targetdomain.com' placeholder (case-insensitive) with user input
+      const regex = new RegExp('targetdomain\\.com', 'gi');
+      query = query.replace(regex, target);
+
+      // Wrap wildcard domains in quotes if missing
+      query = query.replace(/(\*\.[\w.-]+)/g, (match) => {
+        if (query.includes(`"${match}"`)) return match;
+        return `"${match}"`;
+      });
+
+      const encodedQuery = encodeURIComponent(query);
+      const fullUrl = baseUrl + encodedQuery;
+
+      outputDiv.innerHTML = `
+        <p class="mb-2 font-semibold">Generated URL:</p>
+        <a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline break-words">${fullUrl}</a>
+      `;
+    });
+  </script>
+
+</body>
+</html>
